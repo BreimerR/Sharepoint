@@ -17,7 +17,7 @@ use \Office365\PHP\Client\Runtime\Auth\AuthenticationContext;
 use \Office365\PHP\Client\SharePoint\FileCreationInformation;
 
 
-$spo_settings = include("vendor/vgrem/php-spo/Settings.php");
+$spo_settings = include("../vendor/vgrem/php-spo/Settings.php");
 
 class Sharepoint
 {
