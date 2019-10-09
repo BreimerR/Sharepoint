@@ -11,6 +11,7 @@
  */
 
 
+use Office365\PHP\Client\Runtime\Utilities\RequestOptions;
 use \Office365\PHP\Client\SharePoint\ClientContext;
 use \Office365\PHP\Client\Runtime\Auth\AuthenticationContext;
 use \Office365\PHP\Client\SharePoint\FileCreationInformation;
@@ -89,7 +90,9 @@ class Sharepoint
                 //$uploadFile->getListItemAllFields()->update();
                 //$ctx->executeQuery();
 
-                echo "<br> Uploaded.";
+                echo "<br/> Uploaded.";
+
+                return true;
 
             } catch (Exception $e) {
                 echo "<br> failed";
@@ -106,6 +109,8 @@ class Sharepoint
                 }
             }
         }
+
+        return false;
     }
 
     function createFolder($folder)
@@ -130,11 +135,45 @@ class Sharepoint
             $parentFolder = $this->_ctx->getWeb()->getFolderByServerRelativeUrl($parentFolder);
             $childFolder = $parentFolder->getFolders()->add($folder);
             $this->_ctx->executeQuery();
+
+            return true;
         } catch (Exception $e) {
             $this->_error = "Folder creation failed.<br>{$e->getMessage()}";
             echo $this->_error;
         }
+
+        return false;
     }
+
+    function renameFolder($webUrl, $authCtx, $folderUrl, $folderNewName)
+    {
+        try {
+            $url = $webUrl . "/_api/web/getFolderByServerRelativeUrl('{$folderUrl}')/ListItemAllFields";
+            $request = new RequestOptions($url);
+            $resp = $this->_ctx->executeQueryDirect($request);
+            $data = json_decode($resp);
+
+            $itemPayload = array(
+                '__metadata' => array('type' => $data->d->__metadata->type),
+                'Title' => $folderNewName,
+                'FileLeafRef' => $folderNewName
+            );
+
+            $itemUrl = $data->d->__metadata->uri;
+            $request = new RequestOptions($itemUrl);
+            $request->addCustomHeader("X-HTTP-Method", "MERGE");
+            $request->addCustomHeader("If-Match", "*");
+            $request->Data = $itemPayload;
+            $this->_ctx->executeQueryDirect($request);
+
+            return true;
+        } catch (Exception $e) {
+            $this->_error = $e->getMessage();
+        }
+
+        return false;
+    }
+
 
     function getWeb()
     {

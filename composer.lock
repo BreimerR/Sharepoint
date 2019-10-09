@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "03e558b8a7fe9340c94a19032b87e4ae",
+    "content-hash": "f8253adcfe3e70f0047adde5f88a5c40",
     "packages": [
         {
             "name": "vgrem/php-spo",
@@ -59,6 +59,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-json": "*"
+    },
     "platform-dev": []
 }
